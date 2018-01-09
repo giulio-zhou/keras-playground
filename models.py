@@ -1,4 +1,6 @@
 from keras.layers import Dense, Activation
+from keras.layers import Conv2D
+from keras.layers import Flatten
 from keras.models import Sequential
 
 def simple_mlp(layer_n_units, activations, weights=[]):
@@ -19,4 +21,22 @@ def simple_mlp(layer_n_units, activations, weights=[]):
     weight_matrix = weights[i-1] if len(weights) > 0 else None
     model.add(Dense(units=layer_n_units[i], weights=weight_matrix))
     model.add(Activation(activations[i-1]))
+  return model
+
+def simple_mnist_convnet():
+  model = Sequential()
+  model.add(Conv2D(8, 3, strides=(1, 1), padding="same",
+                   input_shape=(28, 28, 1)))
+  model.add(Activation('relu'))
+  model.add(Conv2D(8, 3, strides=(2, 2), padding="same"))
+  model.add(Activation('relu'))
+  model.add(Conv2D(16, 3, strides=(1, 1), padding="same"))
+  model.add(Activation('relu'))
+  model.add(Conv2D(16, 3, strides=(2, 2), padding="same"))
+  model.add(Activation('relu'))
+  model.add(Flatten())
+  model.add(Dense(units=200))
+  model.add(Activation('relu'))
+  model.add(Dense(units=10))
+  model.add(Activation('softmax'))
   return model

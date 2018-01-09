@@ -24,7 +24,6 @@ def train_mnist_mlp():
 
   data, labels = get_mnist_data()
   train_x, train_y, test_x, test_y = mnist_train_test_split(data, labels)
-  train_x, test_x = train_x.astype('float32'), test_x.astype('float32')
   train_x, test_x = train_x / 255., test_x / 255.
 
   model = simple_mlp(layer_n_units, activations)
@@ -53,6 +52,26 @@ def train_mnist_mlp_autoencoder():
   print('=================')
   print(model.evaluate(test_x, test_x, batch_size=128))
   model.save('mnist_mlp_autoencoder.h5')
+
+def train_mnist_simple_convnet():
+  from models import simple_mnist_convnet
+  loss = 'categorical_crossentropy'
+  optimizer = 'adam'
+  metrics = ['accuracy']
+
+  data, labels = get_mnist_data()
+  train_x, train_y, test_x, test_y = mnist_train_test_split(data, labels)
+  train_x, test_x = train_x / 255., test_x / 255.
+  train_x = train_x.reshape(-1, 28, 28, 1)
+  test_x = test_x.reshape(-1, 28, 28, 1)
+
+  model = simple_mnist_convnet()
+  model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
+  model.fit(train_x, train_y, epochs=10, batch_size=128)
+
+  print('=================')
+  print(model.evaluate(test_x, test_y, batch_size=128))
+  model.save('mnist_simple_convnet.h5')
 
 def eval_mnist_mlp_autoencoder():
   layer_n_units = [784, 200, 100]
@@ -83,5 +102,6 @@ def eval_mnist_mlp_autoencoder():
 
 if __name__ == '__main__':
   train_mnist_mlp()
+  train_mnist_simple_convnet()
   train_mnist_mlp_autoencoder()
   eval_mnist_mlp_autoencoder()
