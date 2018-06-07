@@ -55,6 +55,26 @@ def train_mnist_simple_convnet():
   print(model.evaluate(test_x, test_y, batch_size=128))
   model.save('mnist_simple_convnet.h5')
 
+def train_mnist_conv_autoencoder():
+  from models import mnist_conv_autoencoder
+  loss = 'mean_squared_error'
+  optimizer = 'adam'
+  metrics = []
+
+  data, labels = get_mnist_data()
+  train_x, train_y, test_x, test_y = mnist_train_test_split(data, labels)
+  train_x, test_x = train_x / 255., test_x / 255.
+  train_x = train_x.reshape(-1, 28, 28, 1)
+  test_x = test_x.reshape(-1, 28, 28, 1)
+
+  model = mnist_conv_autoencoder()
+  model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
+  model.fit(train_x, train_x, epochs=50, batch_size=32)
+
+  print('=================')
+  print(model.evaluate(test_x, test_x, batch_size=128))
+  model.save('mnist_conv_autoencoder.h5')
+
 def train_mnist_mlp_autoencoder():
   layer_n_units = [784, 200, 100, 200, 784]
   activations = ['tanh', 'tanh', 'tanh', 'sigmoid']
@@ -198,5 +218,6 @@ if __name__ == '__main__':
   train_mnist_simple_convnet()
   train_mnist_mlp_autoencoder()
   eval_mnist_mlp_autoencoder()
+  train_mnist_conv_autoencoder()
   train_simple_mnist_gan()
   train_mnist_conv_gan()

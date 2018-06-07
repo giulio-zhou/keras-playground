@@ -44,6 +44,31 @@ def simple_mnist_convnet():
   model.add(Activation('softmax'))
   return model
 
+def mnist_conv_autoencoder():
+  model = Sequential()
+  model.add(Conv2D(16, 3, strides=(2, 2), padding="same",
+                   input_shape=(28, 28, 1)))
+  model.add(Activation('relu'))
+  model.add(Conv2D(32, 3, strides=(2, 2), padding="same"))
+  model.add(Activation('relu'))
+  model.add(Flatten())
+  model.add(Dense(units=500))
+  model.add(Activation('relu'))
+  model.add(Dense(units=200))
+  model.add(Activation('relu'))
+  model.add(Dense(units=100))
+  model.add(Activation('relu'))
+  model.add(Dense(units=200))
+  model.add(Activation('relu'))
+  model.add(Dense(units=7*7*32))
+  model.add(Activation('relu'))
+  model.add(Reshape((7, 7, 32)))
+  model.add(Conv2DTranspose(16, 3, strides=(2, 2), padding="same"))
+  model.add(Activation('relu'))
+  model.add(Conv2DTranspose(1, 3, strides=(2, 2), padding="same"))
+  model.add(Activation('sigmoid'))
+  return model
+
 # Utility function for training GANs.
 def make_model_trainable(model, val):
   model.trainable = val
